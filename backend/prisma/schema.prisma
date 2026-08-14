@@ -1,0 +1,71 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum VisitStatus {
+  INTERESTED
+  FOLLOW_UP
+  CONVERTED
+  REJECTED
+  NO_RESPONSE
+}
+
+enum Priority {
+  HOT
+  WARM
+  COLD
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  name         String?
+  createdAt    DateTime @default(now())
+  visits       Visit[]
+}
+
+model Office {
+  id        String   @id @default(uuid())
+  name      String
+  address   String?
+  locality  String?
+  latitude  Float?
+  longitude Float?
+  createdAt DateTime @default(now())
+  visits    Visit[]
+}
+
+model Visit {
+  id               String        @id @default(uuid())
+  office           Office        @relation(fields: [officeId], references: [id], onDelete: Cascade)
+  officeId         String
+  user             User?         @relation(fields: [userId], references: [id])
+  userId           String?
+  visitDate        DateTime
+  status           VisitStatus
+  priority         Priority
+  contactName      String?
+  contactDesignation String?
+  contactNumber    String?
+  interestTags     Json?
+  notes            String?
+  nextFollowupDate DateTime?
+  latitude         Float?
+  longitude        Float?
+  createdAt        DateTime      @default(now())
+  attachments      VisitAttachment[]
+}
+
+model VisitAttachment {
+  id         String   @id @default(uuid())
+  visit      Visit    @relation(fields: [visitId], references: [id], onDelete: Cascade)
+  visitId    String
+  fileUrl    String
+  uploadedAt DateTime @default(now())
+}
