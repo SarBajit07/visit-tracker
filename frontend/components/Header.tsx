@@ -11,8 +11,18 @@ export default function Header() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
 
   useEffect(() => {
-    const hasToken = document.cookie.includes('token=')
-    setIsAuthenticated(hasToken)
+    const apiBase = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'
+
+    async function checkAuth() {
+      try {
+        const res = await fetch(`${apiBase}/api/auth/me`, { credentials: 'include' })
+        setIsAuthenticated(res.ok)
+      } catch {
+        setIsAuthenticated(false)
+      }
+    }
+
+    checkAuth()
 
     const update = () => {
       setOnline(navigator.onLine)

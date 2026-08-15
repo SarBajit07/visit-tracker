@@ -8,10 +8,20 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    // Check if user has token (simple check - in production use proper auth context)
-    const hasToken = document.cookie.includes('token=')
-    setIsAuthenticated(hasToken)
-    setIsLoading(false)
+    const apiBase = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'
+
+    async function checkAuth() {
+      try {
+        const res = await fetch(`${apiBase}/api/auth/me`, { credentials: 'include' })
+        setIsAuthenticated(res.ok)
+      } catch {
+        setIsAuthenticated(false)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    checkAuth()
   }, [])
 
   if (isLoading) {

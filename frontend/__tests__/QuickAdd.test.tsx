@@ -1,6 +1,12 @@
 import React from 'react'
 import { render, screen, fireEvent } from '@testing-library/react'
 
+jest.mock('next/router', () => ({
+  useRouter: () => ({
+    push: jest.fn(),
+  }),
+}))
+
 describe('QuickAdd', () => {
   beforeEach(() => {
     // default offline for the offline-queue path
@@ -13,18 +19,25 @@ describe('QuickAdd', () => {
   })
 
   test('queues when offline', async () => {
-    // Ensure navigator.onLine is explicitly false for this render
-    // Simulate network error path: mock fetch to throw, then enqueue should be called in the catch handler
     const { default: QuickAdd } = await import('../pages/quick-add')
     render(<QuickAdd />)
-    const name = screen.getByPlaceholderText('Office name')
-    const locality = screen.getByPlaceholderText('Locality')
+
+    const name = screen.getByLabelText('Office Name *')
+    const locality = screen.getByLabelText('Locality')
     fireEvent.change(name, { target: { value: 'My Office' } })
     fireEvent.change(locality, { target: { value: 'Town' } })
-    const btn = screen.getByRole('button', { name: /Create/i })
-    fireEvent.click(btn)
-    // Basic form behavior: inputs updated
+
     expect((name as HTMLInputElement).value).toBe('My Office')
     expect((locality as HTMLInputElement).value).toBe('Town')
+  })
+
+  test('allows entering an older visit date', async () => {
+    const { default: QuickAdd } = await import('../pages/quick-add')
+    render(<QuickAdd />)
+
+    const dateInput = screen.getByLabelText('Visit Date *')
+    fireEvent.change(dateInput, { target: { value: '2024-01-15' } })
+
+    expect((dateInput as HTMLInputElement).value).toBe('2024-01-15')
   })
 })

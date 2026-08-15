@@ -12,6 +12,7 @@ export default function QuickAdd() {
     contactName: '',
     contactDesignation: '',
     contactNumber: '',
+    visitDate: new Date().toISOString().split('T')[0],
     status: 'FOLLOW_UP',
     priority: 'WARM',
     notes: '',
@@ -36,7 +37,7 @@ export default function QuickAdd() {
         status: formData.status,
         priority: formData.priority,
         notes: formData.notes,
-        visitDate: new Date().toISOString().split('T')[0],
+        visitDate: formData.visitDate || new Date().toISOString().split('T')[0],
       }
 
       const opts: RequestInit = {
@@ -56,6 +57,7 @@ export default function QuickAdd() {
           contactName: '',
           contactDesignation: '',
           contactNumber: '',
+          visitDate: new Date().toISOString().split('T')[0],
           status: 'FOLLOW_UP',
           priority: 'WARM',
           notes: '',
@@ -108,8 +110,9 @@ export default function QuickAdd() {
               <h2 className="text-lg font-semibold text-gray-900 mb-4">Office Information</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Office Name *</label>
+                  <label htmlFor="officeName" className="block text-sm font-medium text-gray-700 mb-1">Office Name *</label>
                   <input
+                    id="officeName"
                     type="text"
                     value={formData.officeName}
                     onChange={(e) => setFormData({ ...formData, officeName: e.target.value })}
@@ -119,8 +122,9 @@ export default function QuickAdd() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Locality</label>
+                  <label htmlFor="locality" className="block text-sm font-medium text-gray-700 mb-1">Locality</label>
                   <input
+                    id="locality"
                     type="text"
                     value={formData.locality}
                     onChange={(e) => setFormData({ ...formData, locality: e.target.value })}
@@ -180,6 +184,17 @@ export default function QuickAdd() {
             <div className="border-b pb-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">Visit Status</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="visitDate" className="block text-sm font-medium text-gray-700 mb-1">Visit Date *</label>
+                  <input
+                    id="visitDate"
+                    type="date"
+                    value={formData.visitDate}
+                    onChange={(e) => setFormData({ ...formData, visitDate: e.target.value })}
+                    className="input-field"
+                    required
+                  />
+                </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Status *</label>
                   <select

@@ -20,6 +20,10 @@ app.post('/api/auth/logout', (req, res) => {
 
 app.get('/api/ping', (req, res) => res.json({ ok: true }));
 
+app.get('/api/auth/me', authMiddleware, (req, res) => {
+  res.json({ ok: true, user: { id: req.user.id, email: req.user.email, name: req.user.name || null } });
+});
+
 // Serve uploaded files
 const path = require('path');
 app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
